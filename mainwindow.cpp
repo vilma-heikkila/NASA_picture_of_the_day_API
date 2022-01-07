@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
     QObject::connect(manager, &QNetworkAccessManager::finished,
          this, [=](QNetworkReply *reply) {
             if (reply->error()) {
+
                 qDebug() << reply->errorString();
                 ui->errorLabel->setText("Sorry! No picture found.");
                 ui->picPushButton->setEnabled(false);
@@ -22,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
             }
 
             if (data == APOD) {
+                // parse JSON object to get data
 
                 QString answer = reply->readAll();
                 QJsonDocument doc = QJsonDocument::fromJson(answer.toUtf8());
@@ -32,6 +34,8 @@ MainWindow::MainWindow(QWidget *parent)
             }
 
             else if (data == PICTURE) {
+                // display image
+
                 QByteArray jpegData = reply->readAll();
                 QPixmap pixmap;
                 pixmap.loadFromData(jpegData);
@@ -42,13 +46,6 @@ MainWindow::MainWindow(QWidget *parent)
                 ui->label->setPixmap(pixmap.scaled(width,height,Qt::KeepAspectRatio));
                 ui->textBrowser->setText(explanation);
             }
-
-           /*for (auto itr = array.begin(); itr != array.end(); itr ++) {
-                 QJsonObject JSONObject = itr->toObject();
-
-                 QString explanation = QString(JSONObject.find("explanation").value().toString());
-
-            }*/
 
             //qDebug() << answer;
             }

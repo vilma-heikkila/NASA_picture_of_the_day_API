@@ -24,7 +24,7 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
-enum dataType {APOD, PICTURE};
+enum dataType {APOD, PICTURE};  // APOD = full data from API, PICTURE = url to image
 
 class MainWindow : public QMainWindow
 {
@@ -33,11 +33,18 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+    // Get today's date
     QDate getCurrentDate();
+
+    // Return selected date from UI
     std::string returnDate();
 
 private slots:
+    // for fetching data
     void on_pushButton_clicked();
+
+    // for displaying image
     void on_picPushButton_clicked();
 
 private:
