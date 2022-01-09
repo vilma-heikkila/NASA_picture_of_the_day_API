@@ -20,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent)
                 qDebug() << reply->errorString();
                 ui->errorLabel->setText("Sorry! No picture found.");
                 ui->picPushButton->setEnabled(false);
+                ui->waitLabel->setText("");
                 return;
             }
 
