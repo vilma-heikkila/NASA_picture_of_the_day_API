@@ -16,6 +16,7 @@
 #include "QJsonArray"
 #include <QPixmap>
 #include <QByteArray>
+#include <QFileDialog>
 
 // API key for NASA LvfXhGqeHglcdvXboak6dvdysKR3jpIR24z67P6t
 
@@ -47,6 +48,8 @@ private slots:
     // for displaying image
     void on_picPushButton_clicked();
 
+    void on_saveButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     QNetworkAccessManager *manager;
@@ -58,6 +61,8 @@ private:
 
     QUrl apiurl;
     std::string date;
+
+    QPixmap img;
 
 
 

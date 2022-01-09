@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     ui->picPushButton->setEnabled(false);
+    ui->saveButton->setEnabled(false);
     ui->dateEdit->setDate(getCurrentDate());
     setWindowTitle("NASA Picture of the day");
 
@@ -25,26 +26,34 @@ MainWindow::MainWindow(QWidget *parent)
             if (data == APOD) {
                 // parse JSON object to get data
 
+
                 QString answer = reply->readAll();
                 QJsonDocument doc = QJsonDocument::fromJson(answer.toUtf8());
 
                 QJsonObject obj = doc.object();
                 explanation = QString(obj.find("explanation").value().toString());
                 imageurl = QUrl(obj.find("url").value().toString());
+                ui->picPushButton->setEnabled(true);
+                ui->saveButton->setEnabled(true);
+                ui->waitLabel->setText("");
             }
 
             else if (data == PICTURE) {
                 // display image
 
+
                 QByteArray jpegData = reply->readAll();
                 QPixmap pixmap;
                 pixmap.loadFromData(jpegData);
+
+                img = pixmap;
 
                 int width = ui->label->width();
                 int height = ui->label->height();
 
                 ui->label->setPixmap(pixmap.scaled(width,height,Qt::KeepAspectRatio));
                 ui->textBrowser->setText(explanation);
+                ui->picPushButton->setEnabled(false);
             }
 
             //qDebug() << answer;
@@ -85,6 +94,7 @@ std::string MainWindow::returnDate()
     }
 
     std::string newdate = year+"-"+month+"-"+day;
+    date = newdate;
 
     return newdate;
 
@@ -95,13 +105,15 @@ void MainWindow::on_pushButton_clicked()
     data = APOD;
     ui->label->clear();
     ui->errorLabel->clear();
+    ui->saveButton->setEnabled(false);
 
     std::string apidate = returnDate();
     std::string url = std::string("https://api.nasa.gov/planetary/apod?") + "date=" + apidate + "&" + "api_key=LvfXhGqeHglcdvXboak6dvdysKR3jpIR24z67P6t";
 
     request.setUrl(QUrl(QString::fromStdString(url)));
     manager->get(request);
-    ui->picPushButton->setEnabled(true);
+    ui->waitLabel->setText("Please wait...");
+
 }
 
 void MainWindow::on_picPushButton_clicked()
@@ -109,6 +121,14 @@ void MainWindow::on_picPushButton_clicked()
     data = PICTURE;
     request.setUrl(imageurl);
     manager->get(request);
-    ui->picPushButton->setEnabled(false);
+}
+
+
+void MainWindow::on_saveButton_clicked()
+{
+    QString filename = QFileDialog::getSaveFileName(this, tr("Save Image File"),
+                                                    QString(),
+                                                  tr("Images (*.png)"));
+    img.save(filename);
 }
 
